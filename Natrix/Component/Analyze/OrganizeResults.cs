@@ -18,7 +18,7 @@ namespace Natrix
         public Optimization Optimizaton = new Optimization();
         public GenerationCollection Generations = new GenerationCollection();
         public SortCollection()
-          : base("SortResults", "SortP",
+          : base("Organize Results", "Organize",
               "stores the generated solutions and sort them from the most optimal options",
               "Natrix", "Generation")
         {

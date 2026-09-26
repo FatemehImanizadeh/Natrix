@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -632,16 +632,7 @@ namespace Natrix.Component.Start
                         75,
                         70);
 
-            Color inactiveColor =
-                Color.FromArgb(
-                    218,
-                    218,
-                    218);
-
-            Color fillColor =
-                active
-                    ? activeColor
-                    : inactiveColor;
+            Color fillColor = active ? activeColor : System.Windows.Forms.ControlPaint.Light(activeColor);
 
             using var fillBrush =
                 new SolidBrush(fillColor);

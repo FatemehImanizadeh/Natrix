@@ -25,7 +25,7 @@ namespace Natrix.Component.Export
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Generation Collection", "GC", "Connect one generated parking collection from SortResults.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Generation Collection", "GC", "Connect one generated parking collection from Organize Results.", GH_ParamAccess.item);
             pManager.AddGenericParameter("Car Block (legacy)", "Blk", "Unused; cars_2/cars_3 are selected internally from cell size.", GH_ParamAccess.item);
             pManager[1].Optional = true;
             pManager.AddIntegerParameter("Top Count", "N", "Number of best-scoring valid options to export; fewer are used if the collection is smaller.", GH_ParamAccess.item, 10);

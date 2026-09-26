@@ -18,9 +18,9 @@ namespace Natrix.Component.Start
 
         public StartGenerationFast()
         {
-            Name = "Start Generation Fast";
-            NickName = "FastStart";
-            Description = "Generates at the fastest scheduled solution rate for a duration or until Stop. Connect to SortResults.";
+            Name = "Parking Solver Fast";
+            NickName = "FastSolver";
+            Description = "Generates at the fastest scheduled solution rate for a duration or until Stop. Connect to Organize Results.";
         }
 
         public override Guid ComponentGuid => new Guid("71338C6C-8DA5-47F8-A8C1-74A447B94FD0");

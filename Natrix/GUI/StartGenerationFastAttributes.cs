@@ -15,8 +15,8 @@ namespace Natrix
         private readonly RectangleF[] _buttons = new RectangleF[14];
         private readonly double[] _sizes = { 5.0, 5.5, 6.5 };
         private readonly int[] _durations = { 10, 20, 60, 0 };
-        private StartGenerationFast Component => (StartGenerationFast)Owner;
-        public StartGenerationFastAttributes(StartGenerationFast owner) : base(owner) { }
+        private ParkingSolver Component => (ParkingSolver)Owner;
+        public StartGenerationFastAttributes(ParkingSolver owner) : base(owner) { }
 
         protected override void Layout()
         {
@@ -53,6 +53,18 @@ namespace Natrix
                 bool active = i == 0 ? Component.AddRamp : i < 5 ? (int)Component.EntranceSide == i - 1 :
                     i < 9 ? Component.DurationSeconds == _durations[i - 5] : i == 9 ? Component.Running :
                     i == 10 ? !Component.Running : Component.CellSizeMeters == _sizes[i - 11];
+                if (i == 9 || i == 10)
+                {
+                    Color color = i == 9 ? Color.FromArgb(65, 145, 75) : Color.FromArgb(175, 75, 70);
+                    using (var fill = new SolidBrush(active ? color : ControlPaint.Light(color)))
+                    using (var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                    {
+                        graphics.FillRectangle(fill, _buttons[i]);
+                        graphics.DrawRectangle(Pens.DimGray, Rectangle.Round(_buttons[i]));
+                        graphics.DrawString(labels[i], GH_FontServer.Standard, Brushes.White, _buttons[i], format);
+                    }
+                    continue;
+                }
                 using (var capsule = GH_Capsule.CreateTextCapsule(_buttons[i], _buttons[i],
                     active ? GH_Palette.Black : GH_Palette.Normal, labels[i]))
                     capsule.Render(graphics, Selected, Owner.Locked || (Component.Running && i != 9 && i != 10), false);

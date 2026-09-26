@@ -147,6 +147,8 @@ namespace Natrix
                 for (int j = 0; j < col; j++)
                 {
                     var containment1 = Outline.Contains(ptGrid.Branch(i)[j], Plane.WorldXY, 0.01);
+                    // Initialize usable cells even when no exclusions are supplied.
+                    mtx[i, j] = containment1 == PointContainment.Inside ? 1 : 0;
                    
                    foreach(var crv in Exclutions)
                     {
