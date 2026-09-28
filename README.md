@@ -22,8 +22,7 @@ An intelligent computational design tool developed as part of my Master's thesis
 
 ## 📥 Installation
 
-1. Download the latest release >> ParkingDemo/obj/Debug
-/net48/Parkingdemo.gha
+1. Visit [food4Rhino](https://www.food4rhino.com/), search for **Natrix**, and download the plugin.
 2. Copy the `.gha` file into your Grasshopper Components folder:
    - Usually located at: `C:\Users\YourName\AppData\Roaming\Grasshopper\Libraries\`
 3. Restart Rhino / Grasshopper
