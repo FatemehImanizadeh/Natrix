@@ -6,13 +6,14 @@ namespace Natrix.Utils
 {
     public class Optimization
     {
-        public double LotNumW { get; set; } = 0.50;
-        public double PathLenW { get; set; } = 0.20;
-        public double DirShiftW { get; set; } = 0.30;
+        public const double DefaultCapacityWeight = 0.90;
+        public const double DefaultOtherWeight = 0.025;
+        public double LotNumW { get; set; } = DefaultCapacityWeight;
+        public double PathLenW { get; set; } = DefaultOtherWeight;
+        public double DirShiftW { get; set; } = DefaultOtherWeight;
         // Initial tuning weights, not standards; lower spread means more uniform access.
-        public double PathStdDevW { get; set; } = 0.15;
-        public double TurnsStdDevW { get; set; } = 0.15;
-        public double NonFuncW { get; set; } // Legacy setting; unused by this score.
+        public double PathStdDevW { get; set; } = DefaultOtherWeight;
+        public double TurnsStdDevW { get; set; } = DefaultOtherWeight;
 
         public static void OptimizationFunction(Optimization weights, IEnumerable<Parking> parkings)
         {
@@ -41,7 +42,7 @@ namespace Natrix.Utils
             double minTurnSpread = rows.Min(r => r.TurnSpread), maxTurnSpread = rows.Max(r => r.TurnSpread);
             // Scores are collection-relative: rescore every option when the ranges change.
             // Reward capacity; reverse distance and turns so lower values score better.
-            // Defaults make turns 1.5 times as influential as distance; maxima add no penalty.
+            // Defaults allocate 90% to capacity and 2.5% to each other criterion.
             foreach (var r in rows)
             {
                 // Relative weights produce a unit score; clamp floating-point roundoff to [0, 1].

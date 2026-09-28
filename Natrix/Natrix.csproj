@@ -32,6 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\cars_block_v7.3dm" LogicalName="Natrix.Cars.3dm" />
+    <EmbeddedResource Include="Resources\NatrixLogo.png" LogicalName="Natrix.Logo.png" />
+    <EmbeddedResource Include="Resources\SetOptimizationWeights.png" LogicalName="Natrix.SetOptimizationWeights.png" />
+    <EmbeddedResource Include="Resources\ParkingSolverIcon.png" LogicalName="Natrix.ParkingSolver.png" />
   </ItemGroup>
   
   <ItemGroup>

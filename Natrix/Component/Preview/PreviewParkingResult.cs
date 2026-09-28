@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -43,7 +43,6 @@ namespace Natrix
         // ====================================================================
 
         private Parking _previewParking;
-        private IGH_Goo _carBlockGoo;
 
         private bool _showCars = true;
         private bool _showGradient = true;
@@ -60,7 +59,7 @@ namespace Natrix
                 "Always previews the generated parking (cars, graded cells, " +
                 "main path, excluded cells, entrance cell, boundary wall) " +
                 "using its precomputed geometry, and bakes the selected " +
-                "elements into Rhino when the BAKE PARKING button is pressed.",
+                "elements into Rhino when the BAKE PARKING button is pressed. Cars use the embedded blocks.",
                 "Natrix",
                 "Preview")
         {
@@ -85,24 +84,6 @@ namespace Natrix
                 GH_ParamAccess.item);
 
 
-            // ---------------------------------------------------------------
-            // Car block
-            // ---------------------------------------------------------------
-
-            // Generic is intentional.
-            //
-            // Grasshopper's native Block Instance parameter may wrap
-            // InstanceObject / InstanceReferenceGeometry inside its own Goo.
-            //
-            // Using Generic allows us to unwrap it ourselves reliably.
-            pManager.AddGenericParameter(
-                "Car Block (legacy)",
-                "Blk",
-                "Unused; cars_2/cars_3 are selected internally from cell size.",
-                GH_ParamAccess.item);
-
-            // Keep the optional legacy socket so existing definitions retain their input indices.
-            pManager[1].Optional = true;
 
 
             // ---------------------------------------------------------------
@@ -119,7 +100,7 @@ namespace Natrix
                 "Show/bake the parked cars.",
                 GH_ParamAccess.item,
                 true);
-            pManager[2].Optional = true;
+            pManager[1].Optional = true;
 
             pManager.AddBooleanParameter(
                 "Bake Gradient Cells",
@@ -127,7 +108,7 @@ namespace Natrix
                 "Show/bake the grade-colored parking cells.",
                 GH_ParamAccess.item,
                 true);
-            pManager[3].Optional = true;
+            pManager[2].Optional = true;
 
             pManager.AddBooleanParameter(
                 "Bake Path",
@@ -135,7 +116,7 @@ namespace Natrix
                 "Show/bake the main circulation path.",
                 GH_ParamAccess.item,
                 true);
-            pManager[4].Optional = true;
+            pManager[3].Optional = true;
 
             pManager.AddBooleanParameter(
                 "Bake Excluded Cells",
@@ -143,7 +124,7 @@ namespace Natrix
                 "Show/bake the excluded cells.",
                 GH_ParamAccess.item,
                 true);
-            pManager[5].Optional = true;
+            pManager[4].Optional = true;
 
             pManager.AddBooleanParameter(
                 "Bake Entrance Cell",
@@ -151,7 +132,7 @@ namespace Natrix
                 "Show/bake the entrance cell.",
                 GH_ParamAccess.item,
                 true);
-            pManager[6].Optional = true;
+            pManager[5].Optional = true;
 
             pManager.AddBooleanParameter(
                 "Bake Walls",
@@ -159,7 +140,7 @@ namespace Natrix
                 "Show/bake the parking boundary wall.",
                 GH_ParamAccess.item,
                 true);
-            pManager[7].Optional = true;
+            pManager[6].Optional = true;
         }
 
 
@@ -184,9 +165,17 @@ namespace Natrix
         protected override void SolveInstance(
             IGH_DataAccess DA)
         {
+            if (Params.Input.Count != 7 || !(Params.Input[1] is Grasshopper.Kernel.Parameters.Param_Boolean))
+            {
+                _previewParking = null;
+                BakeRequested = false;
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+                    "Replace this legacy component with a new Preview Parking Result and reconnect settings by name. " +
+                    "The Car Block input has been removed; cars use the embedded blocks.");
+                return;
+            }
             Parking parking = null;
 
-            IGH_Goo carBlockGoo = null;
 
             bool bakeCars = true;
             bool bakeGradient = true;
@@ -201,15 +190,13 @@ namespace Natrix
                 return;
 
 
-            // Retained for compatibility; geometry comes from the embedded car blocks.
-            DA.GetData(1, ref carBlockGoo);
 
-            DA.GetData(2, ref bakeCars);
-            DA.GetData(3, ref bakeGradient);
-            DA.GetData(4, ref bakePath);
-            DA.GetData(5, ref bakeExcluded);
-            DA.GetData(6, ref bakeEntrance);
-            DA.GetData(7, ref bakeWalls);
+            DA.GetData(1, ref bakeCars);
+            DA.GetData(2, ref bakeGradient);
+            DA.GetData(3, ref bakePath);
+            DA.GetData(4, ref bakeExcluded);
+            DA.GetData(5, ref bakeEntrance);
+            DA.GetData(6, ref bakeWalls);
 
 
             if (parking == null)
@@ -258,7 +245,6 @@ namespace Natrix
                 tolerance);
 
             _previewParking = parking;
-            _carBlockGoo = carBlockGoo;
 
             _showCars = bakeCars;
             _showGradient = bakeGradient;
@@ -288,7 +274,6 @@ namespace Natrix
 
             BakeParking(
                 parking,
-                carBlockGoo,
                 bakeCars,
                 bakeGradient,
                 bakePath,
@@ -304,7 +289,6 @@ namespace Natrix
 
         private void BakeParking(
             Parking parking,
-            IGH_Goo carBlockGoo,
             bool bakeCars,
             bool bakeGradient,
             bool bakePath,

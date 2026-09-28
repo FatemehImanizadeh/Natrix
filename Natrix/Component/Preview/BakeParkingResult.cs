@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -37,7 +37,7 @@ namespace Natrix
                 "BakePark",
                 "Bakes the generated parking visualization into Rhino, including " +
                 "cars, graded cells, main circulation path, excluded cells, " +
-                "entrance cell and parking boundary wall.",
+                "entrance cell and parking boundary wall. Cars use the embedded blocks.",
                 "Natrix",
                 "Preview")
         {
@@ -62,22 +62,6 @@ namespace Natrix
                 GH_ParamAccess.item);
 
 
-            // ---------------------------------------------------------------
-            // Car block
-            // ---------------------------------------------------------------
-
-            // Generic is intentional.
-            //
-            // Grasshopper's native Block Instance parameter may wrap
-            // InstanceObject / InstanceReferenceGeometry inside its own Goo.
-            //
-            // Using Generic allows us to unwrap it ourselves reliably.
-            pManager.AddGenericParameter(
-                "Car Block (legacy)",
-                "Blk",
-                "Unused; cars_2/cars_3 are selected internally from cell size.",
-                GH_ParamAccess.item);
-            pManager[1].Optional = true;
         }
 
 
@@ -104,7 +88,6 @@ namespace Natrix
         {
             Parking parking = null;
 
-            IGH_Goo carBlockGoo = null;
 
 
             // Read Parking
@@ -112,8 +95,6 @@ namespace Natrix
                 return;
 
 
-            // Read Car Block
-            DA.GetData(1, ref carBlockGoo); // Legacy socket; internal blocks are always used.
 
 
             if (parking == null)
@@ -144,9 +125,7 @@ namespace Natrix
             BakeRequested = false;
 
 
-            BakeParking(
-                parking,
-                carBlockGoo);
+            BakeParking(parking);
         }
 
 
@@ -154,9 +133,7 @@ namespace Natrix
         // MAIN BAKE ORCHESTRATOR
         // ====================================================================
 
-        private void BakeParking(
-            Parking parking,
-            IGH_Goo carBlockGoo)
+        private void BakeParking(Parking parking)
         {
             RhinoDoc doc =
                 RhinoDoc.ActiveDoc;

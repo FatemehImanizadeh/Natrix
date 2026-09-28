@@ -20,14 +20,12 @@ namespace Natrix.Component.Export
         internal bool CanExport => !Locked && !_exporting && _selected.Count > 0;
 
         public ExportTopParkingOptions() : base("Export Top Parking Options", "TopExport",
-            "Exports top options as individual PNGs in Images, a combined PNG overview and an editable Rhino file.",
+            "Exports top options as individual PNGs in Images, a combined PNG overview and an editable Rhino file. Cars use the embedded blocks.",
             "Natrix", "Export") { }
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Generation Collection", "GC", "Connect one generated parking collection from SortResults.", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Car Block (legacy)", "Blk", "Unused; cars_2/cars_3 are selected internally from cell size.", GH_ParamAccess.item);
-            pManager[1].Optional = true;
             pManager.AddIntegerParameter("Top Count", "N", "Number of best-scoring valid options to export; fewer are used if the collection is smaller.", GH_ParamAccess.item, 10);
             pManager.AddIntegerParameter("PNG Width", "W", "Width of each annotated PNG in pixels, from 800 to 4096.", GH_ParamAccess.item, 2000);
         }
@@ -52,6 +50,14 @@ namespace Natrix.Component.Export
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            if (Params.Input.Count != 3 || !(Params.Input[1] is Grasshopper.Kernel.Parameters.Param_Integer))
+            {
+                _selected.Clear();
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+                    "Replace this legacy component with a new Export Top Parking Options and reconnect settings by name. " +
+                    "The Car Block input has been removed; cars use the embedded blocks.");
+                return;
+            }
             if (DA.Iteration > 0)
             {
                 _selected.Clear();
@@ -63,7 +69,7 @@ namespace Natrix.Component.Export
             int count = 10;
             int width = 2000;
             if (!DA.GetData(0, ref collection) || collection?.parkings == null) return;
-            if (!DA.GetData(2, ref count) || !DA.GetData(3, ref width)) return;
+            if (!DA.GetData(1, ref count) || !DA.GetData(2, ref width)) return;
             if (count < 1 || width < 800 || width > 4096)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Top Count must be positive; PNG Width must be 800–4096 pixels.");

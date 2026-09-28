@@ -18,12 +18,13 @@ namespace Natrix.Component.Start
 
         public StartGenerationFast()
         {
-            Name = "Start Generation Fast";
-            NickName = "FastStart";
+            Name = "Parking Solver";
+            NickName = "Parking Solver";
             Description = "Generates at the fastest scheduled solution rate for a duration or until Stop. Connect to SortResults.";
         }
 
         public override Guid ComponentGuid => new Guid("71338C6C-8DA5-47F8-A8C1-74A447B94FD0");
+        protected override System.Drawing.Bitmap Icon => NatrixLogo.CreateIcon(24, "Natrix.ParkingSolver.png");
         public override void CreateAttributes() => m_attributes = new StartGenerationFastAttributes(this);
 
         protected override bool CellSizeLocked => Running;

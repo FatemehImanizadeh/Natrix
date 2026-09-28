@@ -35,7 +35,8 @@ namespace Natrix.Component.GUI
         Sec3 = 3000
     }
 
-    public class StartGenerationAdv : GH_Component
+    // Shared generation implementation only; Grasshopper registers the concrete Fast component.
+    public abstract class StartGenerationAdv : GH_Component
     {
         private readonly Random _random = new Random();
 
@@ -65,7 +66,7 @@ namespace Natrix.Component.GUI
 
         public int IntervalMilliseconds => (int)Interval;
 
-        public StartGenerationAdv()
+        protected StartGenerationAdv()
             : base(
                 "Start Generation",
                 "Start",
@@ -267,8 +268,23 @@ namespace Natrix.Component.GUI
 
             double cellSize = CellSizeMeters;
             if (!ValidateCellSize(ref cellSize)) return;
-            cellSize *= Rhino.RhinoMath.UnitScale(Rhino.UnitSystem.Meters,
-                RhinoDoc.ActiveDoc?.ModelUnitSystem ?? Rhino.UnitSystem.Meters);
+            var modelUnits = RhinoDoc.ActiveDoc?.ModelUnitSystem ?? UnitSystem.Meters;
+            cellSize *= RhinoMath.UnitScale(UnitSystem.Meters, modelUnits);
+
+            double width = boundingBox.Max.X - boundingBox.Min.X;
+            double height = boundingBox.Max.Y - boundingBox.Min.Y;
+            string sizeDetails =
+                $"Outline XY dimensions: {width:G6} x {height:G6} {modelUnits}. " +
+                $"Cell size: {cellSize:G6} {modelUnits} ({CellSizeMeters:G6} meters). " +
+                "Check the input curve dimensions and Rhino model units; " +
+                "make sure the geometry is scaled to its intended real-world size.";
+
+            if (width < cellSize || height < cellSize)
+            {
+                StopGenerationBecauseOfWarning(
+                    "The parking outline is too small for the selected cell size. " + sizeDetails);
+                return;
+            }
 
             DataTree<Point3d> grid = ParkingUtils.CreateGrid(
                 (int)Math.Ceiling(maximumPoint.Y / cellSize),
@@ -288,6 +304,23 @@ namespace Natrix.Component.GUI
                 crv,
                 excludeCrvs,
                 out excludeCells, cellSize);
+
+            bool hasUsableCell = false;
+            for (int row = 0; row < planToMatrix.RowCount && !hasUsableCell; row++)
+                for (int column = 0; column < planToMatrix.ColumnCount; column++)
+                    if (planToMatrix[row, column] == 1)
+                    {
+                        hasUsableCell = true;
+                        break;
+                    }
+
+            if (!hasUsableCell)
+            {
+                StopGenerationBecauseOfWarning(
+                    "No usable parking cells were found. Check the outline shape and exclusion boundaries. " +
+                    sizeDetails);
+                return;
+            }
 
             var cells =
                 CellularOutline(grid, planToMatrix, cellSize);
@@ -463,6 +496,15 @@ namespace Natrix.Component.GUI
 
                     ExpireSolution(false);
                 });
+        }
+
+        private void StopGenerationBecauseOfWarning(string message)
+        {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, message);
+            _isAutoRunning = false;
+            _solutionScheduled = false;
+            Message = "Check input";
+            OnDisplayExpired(true);
         }
 
         private void StopGenerationBecauseOfError(
