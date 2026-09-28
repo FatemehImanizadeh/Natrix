@@ -165,7 +165,13 @@ namespace Natrix
         protected override void SolveInstance(
             IGH_DataAccess DA)
         {
-            if (Params.Input.Count != 7 || !(Params.Input[1] is Grasshopper.Kernel.Parameters.Param_Boolean))
+            // Older definitions retain the removed block socket. Skip it without
+            // losing their existing toggle connections or disabling preview/bake.
+            bool legacyBlockInput = Params.Input.Count == 8 &&
+                (Params.Input[1].NickName == "Blk" || Params.Input[1].Name.StartsWith("Car Block"));
+            int toggleOffset = legacyBlockInput ? 1 : 0;
+            if ((!legacyBlockInput && Params.Input.Count != 7) ||
+                !(Params.Input[1 + toggleOffset] is Grasshopper.Kernel.Parameters.Param_Boolean))
             {
                 _previewParking = null;
                 BakeRequested = false;
@@ -191,12 +197,12 @@ namespace Natrix
 
 
 
-            DA.GetData(1, ref bakeCars);
-            DA.GetData(2, ref bakeGradient);
-            DA.GetData(3, ref bakePath);
-            DA.GetData(4, ref bakeExcluded);
-            DA.GetData(5, ref bakeEntrance);
-            DA.GetData(6, ref bakeWalls);
+            DA.GetData(1 + toggleOffset, ref bakeCars);
+            DA.GetData(2 + toggleOffset, ref bakeGradient);
+            DA.GetData(3 + toggleOffset, ref bakePath);
+            DA.GetData(4 + toggleOffset, ref bakeExcluded);
+            DA.GetData(5 + toggleOffset, ref bakeEntrance);
+            DA.GetData(6 + toggleOffset, ref bakeWalls);
 
 
             if (parking == null)

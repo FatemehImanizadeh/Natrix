@@ -64,7 +64,7 @@
     </None>
   </ItemGroup>
   
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(SkipPluginDeployment)' != 'true'">
     <Exec Command="Copy &quot;$(TargetPath)&quot; &quot;C:\Users\fateme\AppData\Roaming\Grasshopper\Libraries\Natrix.gha&quot;&#xD;&#xA;Erase &quot;$(TargetPath)&quot;" />
   </Target>
 
