@@ -73,16 +73,6 @@ namespace Natrix.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ColumnGenerator {
-            get {
-                object obj = ResourceManager.GetObject("ColumnGenerator", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap DeconstructParking {
             get {
                 object obj = ResourceManager.GetObject("DeconstructParking", resourceCulture);
@@ -136,16 +126,6 @@ namespace Natrix.Properties {
         internal static System.Drawing.Bitmap preview {
             get {
                 object obj = ResourceManager.GetObject("preview", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap RampInfo {
-            get {
-                object obj = ResourceManager.GetObject("RampInfo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

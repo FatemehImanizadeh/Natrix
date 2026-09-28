@@ -35,11 +35,11 @@ namespace Natrix.Component.Start
         private const float PanelWidth = 196f;
         private const float UiHeight = 188f;
 
-        private StartGenerationAdv OwnerComponent =>
-            (StartGenerationAdv)Owner;
+        private ParkingGenerationBase OwnerComponent =>
+            (ParkingGenerationBase)Owner;
 
         public StartGenerationAttributes(
-            StartGenerationAdv owner)
+            ParkingGenerationBase owner)
             : base(owner)
         {
         }

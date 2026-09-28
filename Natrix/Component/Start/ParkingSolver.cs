@@ -7,7 +7,7 @@ using Natrix.Component.GUI;
 namespace Natrix.Component.Start
 {
     // Reuse the existing generator unchanged; only the run controller is different.
-    public sealed class StartGenerationFast : StartGenerationAdv
+    public sealed class ParkingSolver : ParkingGenerationBase
     {
         private readonly Stopwatch _clock = new Stopwatch();
         private GH_Document _document;
@@ -16,7 +16,7 @@ namespace Natrix.Component.Start
         public int DurationSeconds { get; private set; } = 10; // Zero means until Stop.
         public bool Running => _running;
 
-        public StartGenerationFast()
+        public ParkingSolver()
         {
             Name = "Parking Solver Fast";
             NickName = "FastSolver";
