@@ -17,9 +17,10 @@ namespace Natrix
     {
         public Optimization Optimizaton = new Optimization();
         public GenerationCollection Generations = new GenerationCollection();
+        private readonly Dictionary<string, Parking> _layouts = new Dictionary<string, Parking>(StringComparer.Ordinal);
         public SortCollection()
           : base("Organize Results", "Organize Results",
-              "stores the generated solutions and sort them from the most optimal options",
+              "Stores unique parking layouts and sorts them by score. Repeated layouts are skipped.",
               "Natrix", "Generation")
         {
         }
@@ -83,15 +84,31 @@ namespace Natrix
                 parking.PlanCellNum = num2;
                 if (generationReset || (Generations.parkings.Count > 0 &&
                     Math.Abs(Generations.parkings[0].CellSize - parking.CellSize) > 1e-8))
+                {
                     Generations = new GenerationCollection();
+                    _layouts.Clear();
+                }
                 var optimization = new Optimization();
                 PathLength.GetPathLength2(parking);
                 parking.Score = 0;
                 parking.HasValidScore = false;
                 if (parking.IsGenerationValid) 
                 {
+                    // Analysis can turn dead-end path cells into parking bays;
+                    // compare only the final layout, before rescoring the collection.
+                    string key = ParkingLayoutKey.Create(parking);
+                    if (_layouts.TryGetValue(key, out Parking existing))
+                    {
+                        Message = "Duplicate skipped";
+                        DA.SetData(0, existing);
+                        DA.SetData(1, Generations);
+                        stopwatch.Stop();
+                        return;
+                    }
+                    _layouts.Add(key, parking);
                     Generations.parkings.Add(parking);
                 }
+                Message = Generations.parkings.Count + " unique options";
 
                 // New options may change the normalization range for the entire collection.
                 Optimization.OptimizationFunction(optimization, Generations.parkings);
