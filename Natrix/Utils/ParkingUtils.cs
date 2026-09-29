@@ -143,30 +143,56 @@ namespace Natrix
         {
             var excludeCells = new List<Rectangle3d>();
             var mtx = new Matrix(row, col);
+            const int minimumOutlineSamples = 3;
+            const int minimumExcludedSamples = 3;
+            const double containmentTolerance = 0.01;
+            double quarterSize = cellSize / 4;
+            var sampleOffsets = new[]
+            {
+                new Vector3d(-quarterSize, -quarterSize, 0),
+                new Vector3d(quarterSize, -quarterSize, 0),
+                new Vector3d(-quarterSize, quarterSize, 0),
+                new Vector3d(quarterSize, quarterSize, 0)
+            };
             for (int i = 0; i < row; i++)
                 for (int j = 0; j < col; j++)
                 {
                     var point = ptGrid.Branch(i)[j];
-                    // The outline defines usable cells even when no exclusions are supplied.
-                    if (Outline.Contains(point, Plane.WorldXY, 0.01) != PointContainment.Inside)
+                    // Sample the center of each quarter, rather than the cell center.
+                    int outlineSamples = 0;
+                    foreach (var offset in sampleOffsets)
+                        if (Outline.Contains(point + offset, Plane.WorldXY, containmentTolerance) == PointContainment.Inside)
+                            outlineSamples++;
+                    if (outlineSamples < minimumOutlineSamples)
                         continue;
 
                     mtx[i, j] = 1;
                     if (Exclutions == null)
                         continue;
 
-                    foreach (var excludeCrv in Exclutions)
+                    int excludedSamples = 0;
+                    foreach (var offset in sampleOffsets)
                     {
-                        if (excludeCrv == null ||
-                            excludeCrv.Contains(point, Plane.WorldXY, 0.01) != PointContainment.Inside)
-                            continue;
-
+                        // Treat exclusions as a union: overlapping curves must not
+                        // count the same sample more than once.
+                        foreach (var excludeCrv in Exclutions)
+                        {
+                            if (excludeCrv == null ||
+                                excludeCrv.Contains(point + offset, Plane.WorldXY, containmentTolerance) != PointContainment.Inside)
+                                continue;
+                            excludedSamples++;
+                            break;
+                        }
+                        if (excludedSamples >= minimumExcludedSamples)
+                            break;
+                    }
+                    if (excludedSamples >= minimumExcludedSamples)
+                    {
                         mtx[i, j] = 5;
                         var basePt = point + new Vector3d(-cellSize / 2, -cellSize / 2, 0);
                         var plane = Plane.WorldXY;
                         plane.Origin = basePt;
                         excludeCells.Add(new Rectangle3d(plane, cellSize, cellSize));
-                        break;
                     }
                 }
             ExcludeCells = excludeCells;
