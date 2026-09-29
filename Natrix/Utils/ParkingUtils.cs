@@ -146,39 +146,27 @@ namespace Natrix
             for (int i = 0; i < row; i++)
                 for (int j = 0; j < col; j++)
                 {
-                    var containment1 = Outline.Contains(ptGrid.Branch(i)[j], Plane.WorldXY, 0.01);
-                   
-                   foreach(var crv in Exclutions)
+                    var point = ptGrid.Branch(i)[j];
+                    // The outline defines usable cells even when no exclusions are supplied.
+                    if (Outline.Contains(point, Plane.WorldXY, 0.01) != PointContainment.Inside)
+                        continue;
+
+                    mtx[i, j] = 1;
+                    if (Exclutions == null)
+                        continue;
+
+                    foreach (var excludeCrv in Exclutions)
                     {
-                        var excludeCrv = crv;
-                        PointContainment containment2;
-                       if (excludeCrv != null)
-                          containment2 = excludeCrv.Contains(ptGrid.Branch(i)[j], Plane.WorldXY, 0.01);
-                        else
-                        {
-                            containment2 = PointContainment.Outside;
-                        }
-                        if (containment2 == PointContainment.Inside)
-                        {
-                            mtx[i, j] = 5;
-                            var basePt = ptGrid.Branch(i)[j] + new Vector3d(-cellSize / 2, -cellSize / 2, 0);
-                            var plane = Plane.WorldXY;
-                            plane.Origin = basePt;
-                            var rec = new Rectangle3d(plane, cellSize, cellSize);
-                            excludeCells.Add(rec);
-                        }
-                        else
-                        {
-                            if (containment1 == PointContainment.Inside)
-                            {
-                                if (mtx[i,j ] != 5)
-                                mtx[i, j] = 1;
-                            }
-                            else
-                            {
-                                mtx[i, j] = 0;
-                            }
-                        }
+                        if (excludeCrv == null ||
+                            excludeCrv.Contains(point, Plane.WorldXY, 0.01) != PointContainment.Inside)
+                            continue;
+
+                        mtx[i, j] = 5;
+                        var basePt = point + new Vector3d(-cellSize / 2, -cellSize / 2, 0);
+                        var plane = Plane.WorldXY;
+                        plane.Origin = basePt;
+                        excludeCells.Add(new Rectangle3d(plane, cellSize, cellSize));
+                        break;
                     }
                 }
             ExcludeCells = excludeCells;

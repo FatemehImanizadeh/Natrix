@@ -34,7 +34,7 @@ namespace Natrix.Component.Analyze
             pManager.AddNumberParameter("RampInfo", "rampinfo", " ramp information: index0: side, index1: index of ramp start cell on selected side, index2: ramp type, index3: ramp orientation", GH_ParamAccess.list);
             pManager.AddLineParameter("PathLines", "PL", "parking path lines", GH_ParamAccess.list);
             pManager.AddNumberParameter("Generation Time", "GT", "generation time", GH_ParamAccess.item) ;
-            pManager.AddNumberParameter("Path Direction Shift", "PDS", "path direction shift", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Maximum Route Turns", "MaxT", "Maximum direction changes along an entrance-to-parking-space route; excludes the final parking maneuver.", GH_ParamAccess.item);
             pManager.AddNumberParameter("Avg Direction Shift", "ADS", "average path direction shift", GH_ParamAccess.item);
             pManager.AddRectangleParameter("Cells With Grade", "CWG", "path cells with grade", GH_ParamAccess.tree);
             pManager.AddNumberParameter("Lot Count", "LC", "lot count", GH_ParamAccess.item);

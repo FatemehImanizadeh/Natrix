@@ -13,7 +13,8 @@ namespace Natrix.Component.Start
         private GH_Document _document;
         private bool _running, _produced;
         private int _ticket, _completed;
-        public int DurationSeconds { get; private set; } = 10; // Zero means until Stop.
+        private const int DefaultDurationSeconds = 60;
+        public int DurationSeconds { get; private set; } = DefaultDurationSeconds; // Zero means until Stop.
         public bool Running => _running;
 
         public StartGenerationFast()
@@ -140,8 +141,8 @@ namespace Natrix.Component.Start
             bool result = base.Read(reader);
             double size = reader.ItemExists("FastCellSizeMeters") ? reader.GetDouble("FastCellSizeMeters") : 5.0;
             CellSizeMeters = size == 5.5 || size == 6.5 ? size : 5.0;
-            int seconds = reader.ItemExists("FastDurationSeconds") ? reader.GetInt32("FastDurationSeconds") : 10;
-            DurationSeconds = seconds == 0 || seconds == 20 || seconds == 60 ? seconds : 10;
+            int seconds = reader.ItemExists("FastDurationSeconds") ? reader.GetInt32("FastDurationSeconds") : DefaultDurationSeconds;
+            DurationSeconds = seconds == 0 || seconds == 10 || seconds == 20 || seconds == 60 ? seconds : DefaultDurationSeconds;
             return result;
         }
     }

@@ -193,7 +193,6 @@ namespace Natrix.Utils
             var attributes = new ObjectAttributes { LayerIndex = layer, ObjectColor = color, ColorSource = ObjectColorSource.ColorFromObject };
             if (scene != null)
             {
-                attributes.SetUserString("ParkingId", scene.ParkingId.ToString("D"));
                 attributes.SetUserString("Rank", scene.Rank.ToString(CultureInfo.InvariantCulture));
                 attributes.SetUserString("Score", scene.Score.ToString("R", CultureInfo.InvariantCulture));
             }

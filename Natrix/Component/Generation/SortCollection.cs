@@ -18,19 +18,20 @@ namespace Natrix
         public Optimization Optimizaton = new Optimization();
         public GenerationCollection Generations = new GenerationCollection();
         public SortCollection()
-          : base("SortResults", "SortP",
+          : base("Organize Results", "Organize Results",
               "stores the generated solutions and sort them from the most optimal options",
               "Natrix", "Generation")
         {
         }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddBooleanParameter("ResetGeneration", "Reset", "reset previous generation so than a new parking collection would be created based on upcoming iterations", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("ResetGeneration", "Reset", "reset previous generation so than a new parking collection would be created based on upcoming iterations", GH_ParamAccess.item, false);
            /* pManager.AddIntegerParameter("pathstartcell", "startcell", "row and column information of parking entrance cell based on ramp information", GH_ParamAccess.list);
             pManager.AddMatrixParameter("planmatrix", "planmatrix", "the matrix corresponding to plan while each item represents a function in parking", GH_ParamAccess.item);
             pManager.AddRectangleParameter("plancells", "cells", "plan cells of size 5*5 m in datatree that the firs element represents cellrow and the second represents cell column", GH_ParamAccess.tree);
             pManager.AddPointParameter("grid", "grid", "rectangular grid corresponding to plan bounding box(first element of grid paths representscorresponding row in plan matrix ", GH_ParamAccess.tree);*/
             pManager.AddGenericParameter("Parking", "P", "parking basic data greated from the outline grid component", GH_ParamAccess.item);
+            pManager[1].Optional = true;
 
         }
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -47,8 +48,9 @@ namespace Natrix
         {
             var generationReset = false;
             DA.GetData(0, ref generationReset);
-            var parking = new Parking();
-            DA.GetData(1,  ref parking);
+            Parking parking = null;
+            if (!DA.GetData(1, ref parking) || parking == null)
+                return;
             if(parking != null)
             {
                 var grid = parking.PlanPointsGrid;

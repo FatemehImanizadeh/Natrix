@@ -37,7 +37,7 @@ namespace Natrix.Utils
         public List<Part> Parts { get; } = new List<Part>();
         public List<Transform> Cars { get; } = new List<Transform>();
         public BoundingBox Bounds { get; private set; }
-        public string FileStem => "Rank_" + Rank.ToString("D2", CultureInfo.InvariantCulture) + "_" + ParkingId.ToString("N").Substring(0, 8);
+        public string FileStem => "Rank_" + Rank.ToString("D2", CultureInfo.InvariantCulture);
 
         public static List<Parking> SelectBest(IEnumerable<Parking> parkings, int count)
         {
@@ -140,14 +140,14 @@ namespace Natrix.Utils
 
         public string[] Description(string units) => new[]
         {
-            "Rank " + Rank + " | Score: " + Number(Score),
-            "Parking count: " + ParkingCount,
-            "Gross area: " + Number(GrossArea) + " " + units + " squared",
-            "Net area: " + Number(NetArea) + " " + units + " squared",
-            "Average path: " + Number(AverageDistance) + " " + units,
-            "Maximum path: " + Number(MaximumDistance) + " " + units,
-            "Average turns: " + Number(AverageTurns) + " | Maximum turns: " + MaximumTurns,
-            "ID: " + ParkingId.ToString("D")
+            "Rank " + Rank + " | Evaluation score: " + Number(Score),
+            "Parking capacity: " + ParkingCount + " spaces",
+            "Gross plan area: " + Number(GrossArea) + " " + units + " squared",
+            "Net plan area: " + Number(NetArea) + " " + units + " squared",
+            "Mean access distance: " + Number(AverageDistance) + " " + units,
+            "Maximum access distance: " + Number(MaximumDistance) + " " + units,
+            "Mean route turns: " + Number(AverageTurns),
+            "Maximum route turns: " + MaximumTurns
         };
 
         private static string Number(double? value) => value?.ToString("0.###", CultureInfo.InvariantCulture) ?? "N/A";

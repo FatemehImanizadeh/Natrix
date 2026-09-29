@@ -35,7 +35,7 @@ namespace Natrix.Utils
                     MaximumPathLength = parking.MaxLengthGrade * parking.CellSize;
                 }
                 AverageTurns = (double)parking.TotalDirShift / parking.LotNumber;
-                // Use the existing maximum-turn metric defined by the generator.
+                // Maximum over the same entrance-to-space routes used for AverageTurns.
                 MaximumTurns = parking.PathDirectionShift;
             }
         }

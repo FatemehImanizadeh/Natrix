@@ -33,6 +33,7 @@ namespace Natrix.Utils
         private long _GenerationTime = 0;
 
         public long GenerationTime { get { return _GenerationTime; } set { _GenerationTime = value; } }
+        // Maximum turns over recorded entrance-to-space routes, excluding the parking maneuver.
         public int PathDirectionShift { get; set; }
         private DataTree<Transform> _CarTransforms = new DataTree<Transform>();
         public DataTree<Transform> CarTransforms { get => _CarTransforms; set { _CarTransforms = value; } }

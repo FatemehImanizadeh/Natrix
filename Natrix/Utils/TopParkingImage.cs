@@ -79,7 +79,7 @@ namespace Natrix.Utils
                 graphics.Clear(Color.White);
                 graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                 float margin = width * 0.03f;
-                graphics.DrawString("Parking option " + scene.Rank + " | Top view", title, ink, margin, margin * 0.45f);
+                graphics.DrawString("Parking option " + scene.Rank, title, ink, margin, margin * 0.45f);
                 var plot = new RectangleF(margin, width * 0.085f, width - margin * 2, width * 0.48f);
 
                 var bounds = scene.Bounds;
@@ -115,8 +115,8 @@ namespace Natrix.Utils
                 float gradientY = width * 0.748f;
                 for (int i = 0; i < 100; i++)
                     using (var color = new SolidBrush(BakeResultsUtils.GetParkingGradientColor(i / 99.0)))
-                        graphics.FillRectangle(color, margin + i * width * 0.003f, gradientY, width * 0.003f + 1, width * 0.012f);
-                graphics.DrawString("Path grades: near entrance  >  farther away", font, ink, width * 0.35f, gradientY - width * 0.003f);
+                        graphics.FillRectangle(color, margin + i * width * 0.001f, gradientY, width * 0.001f + 1, width * 0.006f);
+                graphics.DrawString("Access distance: shorter to longer", font, ink, margin + width * 0.115f, gradientY - width * 0.004f);
                 string footer = "Gross: generated outline. Net: outline minus excluded cells. Distances: grid grades x cell size.";
                 graphics.DrawString(footer, font, ink, margin, width * 0.786f);
                 if (carTemplate.Count == 0)

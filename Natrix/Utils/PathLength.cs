@@ -147,6 +147,7 @@ namespace Natrix.Utils
         public static int GetPathLength2(Parking Parking)
         {
             Parking.PathLengthVariance = Parking.TurnsVariance = null;
+            Parking.PathDirectionShift = 0;
             double lengthMean = 0, lengthM2 = 0, turnsMean = 0, turnsM2 = 0;
             var mtx = Parking.PlanMatrix.Duplicate();
 
@@ -155,7 +156,7 @@ namespace Natrix.Utils
             var totalLengthByCars = 0;
             var totalPathCellsVisited = 0;
             var totalDirShift = 0;
-            var dirShift = 0; 
+            var maximumRouteTurns = 0;
             var grid = Parking.PlanPointsGrid;
             var pathList = new List<Point3d>();
             var linesList = new List<Line>();
@@ -165,6 +166,7 @@ namespace Natrix.Utils
             {
                 totalLengthByCars += grade;
                 totalDirShift += turns;
+                maximumRouteTurns = Math.Max(maximumRouteTurns, turns);
                 lotNum++;
                 // Welford: population spread of physical distances and corresponding BFS turns.
                 double distance = grade * Parking.CellSize;
@@ -271,10 +273,9 @@ namespace Natrix.Utils
                                             {
                                                 giveParkingAccess = true;
                                                 var currentDir = cellnew.Direction;
-                                                if (currentDir != preDir)
+                                                // The first step establishes a heading; it is not a turn.
+                                                if (currentGrade > 1 && currentDir != preDir)
                                                 {
-                                                    if(currentGrade>1 && currentGrade != 1)
-                                                    dirShift++;
                                                     cellnew.DirShift = cell.DirShift + 1; 
                                                 }
                                                 else
@@ -324,7 +325,7 @@ namespace Natrix.Utils
                         Parking.MaxLengthGrade = currentGrade;
                         Parking.TotalPathCellsVisited = totalPathCellsVisited;
                         Parking.PathLines = linesList;
-                        Parking.PathDirectionShift = dirShift;
+                        Parking.PathDirectionShift = maximumRouteTurns;
                         Parking.TotalDirShift = totalDirShift * carsPerCell;
                         Parking.CarTransforms = allLotTransforms;
                         Parking.CellsWithGrade = allCellsWithGrade;
@@ -355,7 +356,7 @@ namespace Natrix.Utils
                     Parking.MaxLengthGrade = currentGrade;
                     Parking.TotalPathCellsVisited = totalPathCellsVisited;
                     Parking.PathLines = linesList;
-                    Parking.PathDirectionShift = dirShift;
+                    Parking.PathDirectionShift = maximumRouteTurns;
                     Parking.TotalDirShift = totalDirShift * carsPerCell;
                     Parking.CarTransforms = allLotTransforms;
                     Parking.CellsWithGrade = allCellsWithGrade;

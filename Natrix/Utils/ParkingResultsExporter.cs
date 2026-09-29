@@ -138,7 +138,7 @@ namespace Natrix.Utils
             RectangleF panel, string modelUnits)
         {
             string units = string.IsNullOrWhiteSpace(modelUnits) ? "model units" : modelUnits;
-            string[] labels = { "Parking count", "Average distance", "Maximum distance", "Average turns", "Maximum turns", "Score" };
+            string[] labels = { "Parking count", "Average distance", "Maximum distance", "Average turns", "Maximum route turns", "Score" };
             string[] axisUnits = { "spaces", units, units, "turns", "turns", "score" };
             bool[] higherIsBetter = { true, false, false, false, false, true };
             Color[] colors = { Color.FromArgb(0, 105, 150), Color.FromArgb(205, 93, 0),

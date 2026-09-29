@@ -92,9 +92,9 @@ namespace Natrix.Component.GUI
                 GH_ParamAccess.item);
 
             pManager.AddCurveParameter(
-                "Exclude Boundaries",
+                "Exclusion Boundaries",
                 "E",
-                "Optional boundaries excluded from the parking plan.",
+                "Optional boundaries excluded from the parking plan. Leave empty to use the entire outline.",
                 GH_ParamAccess.list);
 
             pManager[1].Optional = true;
