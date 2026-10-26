@@ -51,7 +51,15 @@ Master's in Architectural Technology — Shahid Beheshti University
 
 ## License
 
-This project is licensed under the **MIT License** — feel free to use and modify it for research and educational purposes.
+Natrix — Educational and Non-Commercial License
+
+Copyright © 2026 Fatemeh Imanizadeh Sharifpour.
+
+Natrix is provided free of charge for personal learning, educational activities, and non-commercial academic research.
+
+Commercial use, redistribution, modification, or resale of the software or its source code is not permitted without prior written authorization from the copyright holder.
+
+All rights reserved.
 
 ---
 
